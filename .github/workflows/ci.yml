@@ -1,0 +1,37 @@
+name: CI & Configuration Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate-compose-and-caddy:
+    name: Validate Docker Compose & Caddyfile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose --env-file .env.example config
+
+      - name: Validate Caddyfile Syntax
+        run: |
+          docker run --rm -v ${{ github.workspace }}/Caddyfile:/etc/caddy/Caddyfile caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile
+
+      - name: Validate Shell Scripts Syntax
+        run: |
+          bash -n scripts/init-server.sh
+          bash -n scripts/backup.sh
+
+      - name: Verify Sensitive Files are Ignored
+        run: |
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "ERROR: .env file is tracked by git!"
+            exit 1
+          fi
+          echo "✓ .env is properly git-ignored."
