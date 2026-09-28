@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Academic Assistant - Persian Typography & Math Formula Stylesheet
+   Copy and paste this into: Admin Panel -> Settings -> Interface -> Custom CSS
+   ========================================================================== */
+
+/* 1. Import Vazirmatn Font */
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+/* 2. Global Font Overrides */
+*,
+body,
+button,
+input,
+textarea,
+select,
+.font-sans {
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* 3. Bidirectional Text Alignment & RTL Support */
+.chat-message,
+[dir="auto"] {
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+
+/* Persian paragraph reading comfort */
+.prose {
+  line-height: 1.85 !important;
+  letter-spacing: -0.015em;
+}
+
+/* 4. LaTeX / KaTeX Mathematical Formula Styling */
+.katex-display {
+  direction: ltr !important;
+  text-align: center !important;
+  margin: 1.2rem 0 !important;
+  padding: 0.75rem 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.dark .katex-display {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.katex {
+  direction: ltr !important;
+  font-size: 1.05em !important;
+}
+
+/* 5. Code Block & Runner Visual Polish */
+pre, code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* 6. Clean Interface (Hide Unnecessary External Branding) */
+a[href*="github.com/open-webui"],
+a[href*="discord.gg/open-webui"] {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
