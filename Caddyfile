@@ -1,0 +1,10 @@
+{$DOMAIN:localhost} {
+    encode gzip zstd
+
+    reverse_proxy open-webui:8080 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

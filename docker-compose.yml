@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: chat-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-webui_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace_with_strong_database_password_here}
+      POSTGRES_DB: ${POSTGRES_DB:-openwebui}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - academic-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-webui_user} -d ${POSTGRES_DB:-openwebui}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: chat-webui
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-webui_user}:${POSTGRES_PASSWORD:-replace_with_strong_database_password_here}@postgres:5432/${POSTGRES_DB:-openwebui}
+    volumes:
+      - webui_data:/app/backend/data
+    networks:
+      - academic-net
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: chat-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - open-webui
+    networks:
+      - academic-net
+
+volumes:
+  postgres_data:
+  webui_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  academic-net:
+    driver: bridge
