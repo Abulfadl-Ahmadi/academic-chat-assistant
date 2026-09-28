@@ -1,0 +1,33 @@
+# Environment & Secrets
+.env
+.env.local
+*.secret
+*.pem
+*.key
+
+# Application Data & Volumes
+data/
+webui_data/
+postgres_data/
+caddy_data/
+caddy_config/
+backups/
+*.tar.gz
+*.sql
+*.sql.gz
+*.db
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
