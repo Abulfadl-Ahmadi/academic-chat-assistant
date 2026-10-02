@@ -64,6 +64,17 @@ COPY custom/static/web-app-manifest-512x512.png /app/backend/open_webui/static/w
 # Extra stylesheet, already tracked in git and loaded by the existing setup.
 COPY custom/custom.css /app/backend/open_webui/static/custom.css
 
+# Browser tab title and splash text live in the static index.html, which is
+# generated at upstream build time, so the WEBUI_NAME patch does not reach
+# them. Only the <title> is rewritten; the surrounding "LICENSE covers this
+# branding surface" comments are left intact.
+RUN set -eu; \
+    before=$(grep -c 'Open WebUI' /app/build/index.html || true); \
+    sed -i 's|<title>Open WebUI</title>|<title>G-CAT</title>|' /app/build/index.html; \
+    grep -q '<title>G-CAT</title>' /app/build/index.html \
+      || { echo 'ERROR: title rewrite failed'; exit 1; }; \
+    echo "index.html title set to G-CAT (Open WebUI mentions before: $before)"
+
 # Fingerprint of this layer, so `docker history` shows which custom build is
 # running rather than an opaque copy of the upstream tag.
 ARG CUSTOM_BUILD="dev"

@@ -33,7 +33,9 @@ docker compose exec -T open-webui sh -c '
     || { echo "FAIL: WEBUI_NAME is not G-CAT"; exit 1; }
   grep -rqs "auth.gcat.ir" /app/build/_app/immutable/chunks/*.js \
     || { echo "FAIL: logout chunk does not point at auth.gcat.ir"; exit 1; }
-  echo "OK: branding and logout patch present"
+  grep -q "<title>G-CAT</title>" /app/build/index.html \
+    || { echo "FAIL: page title is not G-CAT"; exit 1; }
+  echo "OK: branding, title and logout patch present"
 '
 
 echo
