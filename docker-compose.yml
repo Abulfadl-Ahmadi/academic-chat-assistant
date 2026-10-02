@@ -18,7 +18,10 @@ services:
       retries: 5
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    # Derived from ghcr.io/open-webui/open-webui:main by Dockerfile.webui, which
+    # bakes in the G-CAT branding and the auth.gcat.ir logout patch. Build with:
+    #   docker build -f Dockerfile.webui -t gcat/open-webui:custom .
+    image: gcat/open-webui:custom
     container_name: chat-webui
     restart: always
     depends_on:

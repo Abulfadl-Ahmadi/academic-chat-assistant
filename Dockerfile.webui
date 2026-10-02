@@ -1,0 +1,71 @@
+# Derived Open WebUI image carrying the G-CAT customisations.
+#
+# Deriving instead of bind-mounting means:
+#   - the files are part of the image, so a `docker compose pull` of the
+#     upstream tag cannot silently drop them;
+#   - the hashed SvelteKit chunk is resolved at build time, so an upstream
+#     rebuild that renames it does not break branding;
+#   - env.py is patched in place rather than replaced, so every other
+#     upstream change still flows through on the next update.
+#
+# Build:  docker build -f Dockerfile.webui -t gcat/open-webui:custom .
+# Update: docker pull ghcr.io/open-webui/open-webui:main && rebuild this.
+
+FROM ghcr.io/open-webui/open-webui:main
+
+# Branding patch for env.py (idempotent; fails loudly if upstream changes).
+COPY custom/apply-brand.py /tmp/apply-brand.py
+RUN python3 /tmp/apply-brand.py && rm -f /tmp/apply-brand.py
+
+# Frontend chunk override.
+#
+# BY75f5Kr.js holds the auth/logout helpers, patched to send sign-out to
+# auth.gcat.ir instead of the built-in /auth?state=logout route. SvelteKit
+# names chunks after a content hash, so the upstream file may be renamed on
+# any rebuild. Find it by content (it is the chunk defining the logout
+# redirect helper) rather than hardcoding the current hashed name.
+COPY custom/BY75f5Kr.js /tmp/BY75f5Kr.js
+RUN set -eu; \
+    matches=$(grep -l 'post_logout_redirect_uri' /app/build/_app/immutable/chunks/*.js \
+             | xargs -r grep -l 'state=logout\|state","logout'); \
+    count=$(printf '%s\n' "$matches" | grep -c . || true); \
+    if [ "$count" -ne 1 ]; then \
+        echo "ERROR: expected exactly 1 auth chunk, found $count"; \
+        printf '%s\n' "$matches"; \
+        echo 'Upstream Open WebUI likely restructured this chunk.'; \
+        exit 1; \
+    fi; \
+    echo "Patching auth chunk: $matches"; \
+    cp /tmp/BY75f5Kr.js "$matches"; \
+    rm -f /tmp/BY75f5Kr.js
+
+# Brand assets. Applied to both the served static dir and the backend dir,
+# which is what Open WebUI reads for favicon/logo.
+COPY custom/static/favicon.png               /app/build/static/favicon.png
+COPY custom/static/favicon-96x96.png         /app/build/static/favicon-96x96.png
+COPY custom/static/favicon.ico              /app/build/static/favicon.ico
+COPY custom/static/logo.png                 /app/build/static/logo.png
+COPY custom/static/splash.png               /app/build/static/splash.png
+COPY custom/static/splash-dark.png          /app/build/static/splash-dark.png
+COPY custom/static/apple-touch-icon.png     /app/build/static/apple-touch-icon.png
+COPY custom/static/web-app-manifest-192x192.png /app/build/static/web-app-manifest-192x192.png
+COPY custom/static/web-app-manifest-512x512.png /app/build/static/web-app-manifest-512x512.png
+
+COPY custom/static/favicon.png               /app/backend/open_webui/static/favicon.png
+COPY custom/static/favicon-96x96.png         /app/backend/open_webui/static/favicon-96x96.png
+COPY custom/static/favicon.ico              /app/backend/open_webui/static/favicon.ico
+COPY custom/static/logo.png                 /app/backend/open_webui/static/logo.png
+COPY custom/static/splash.png               /app/backend/open_webui/static/splash.png
+COPY custom/static/splash-dark.png          /app/backend/open_webui/static/splash-dark.png
+COPY custom/static/apple-touch-icon.png     /app/backend/open_webui/static/apple-touch-icon.png
+COPY custom/static/web-app-manifest-192x192.png /app/backend/open_webui/static/web-app-manifest-192x192.png
+COPY custom/static/web-app-manifest-512x512.png /app/backend/open_webui/static/web-app-manifest-512x512.png
+
+# Extra stylesheet, already tracked in git and loaded by the existing setup.
+COPY custom/custom.css /app/backend/open_webui/static/custom.css
+
+# Fingerprint of this layer, so `docker history` shows which custom build is
+# running rather than an opaque copy of the upstream tag.
+ARG CUSTOM_BUILD="dev"
+LABEL org.openwebui.custom.brand="G-CAT" \
+      org.openwebui.custom.build="${CUSTOM_BUILD}"
