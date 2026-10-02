@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه اشتراک و فعالسازی دستیار هوشمند پژوهش</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Persian Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    <style>
+        body, * {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .gradient-border {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(147, 51, 234, 0.4));
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <span class="text-xl">🎓</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white">سامانه هوشمند پژوهش و جزوات دانشگاه</h1>
+                    <p class="text-xs text-slate-400">مرکز فعالسازی و مدیریت اشتراک کاربران</p>
+                </div>
+            </div>
+            <a href="https://chat.gcat.ir" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-blue-400 text-sm font-medium px-4 py-2 rounded-xl transition border border-slate-700/60 shadow-sm">
+                <span>ورود به چت</span>
+                <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow w-full">
+
+        <!-- Hero Section -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-6">
+                <span>⚡ مجهز به پیشرفتهترین مدلهای هوش مصنوعی و پایگاه دانش تخصصی</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-6">
+                تهیه و فعالسازی اشتراک <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">دستیار دانشگاهی</span>
+            </h2>
+            <p class="text-slate-400 text-base md:text-lg leading-relaxed">
+                دسترسی کامل به جزوات و کتب مرجع فیزیک و مهندسی، رندر زنده فرمولهای پیچیده LaTeX، اجرای کدهای پایتون و پاسخدهی تخصصی به تکالیف و پژوهشها.
+            </p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+
+            <!-- 1 Month -->
+            <div class="bg-slate-900/70 border border-slate-800 rounded-3xl p-8 relative flex flex-col justify-between hover:border-slate-700 transition duration-300 shadow-xl shadow-black/20">
+                <div>
+                    <div class="text-sm font-bold text-slate-400 mb-2">اشتراک پایه</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">۱ ماهه (۳۰ روزه)</h3>
+                    <div class="flex items-baseline gap-2 mb-6">
+                        <span class="text-4xl font-black text-white">۳۹۹,۰۰۰</span>
+                        <span class="text-slate-400 text-sm">تومان</span>
+                    </div>
+                    <ul class="space-y-3.5 text-sm text-slate-300 border-t border-slate-800/80 pt-6 mb-8">
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>دسترسی به تمام مدلهای تحلیلی</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>رندر فرمولهای ریاضی و کاتکس</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>مفسر و اجرای کدهای پایتون</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>پشتیبانی و آپتایم ۲۴/۷</span>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#telegram-purchase" class="w-full text-center py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm transition border border-slate-700">
+                    نحوه خرید و دریافت کد
+                </a>
+            </div>
+
+            <!-- 3 Months (Featured) -->
+            <div class="bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-blue-500 rounded-3xl p-8 relative flex flex-col justify-between shadow-2xl shadow-blue-500/10 transform md:-translate-y-2">
+                <div class="absolute -top-4 right-1/2 transform translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md tracking-wider">
+                    ⭐ پیشنهاد ویژه ترم تحصیلی
+                </div>
+                <div>
+                    <div class="text-sm font-bold text-blue-400 mb-2">بهصرفهترین طرح</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">۳ ماهه (۹۰ روزه)</h3>
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <span class="text-4xl font-black text-white">۹۹۹,۰۰۰</span>
+                        <span class="text-slate-400 text-sm">تومان</span>
+                    </div>
+                    <div class="text-xs text-emerald-400 font-semibold mb-6">
+                        🎉 ۲۰۰,۰۰۰ تومان صرفهجویی نسبت به پلن ماهانه
+                    </div>
+                    <ul class="space-y-3.5 text-sm text-slate-300 border-t border-slate-800/80 pt-6 mb-8">
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span class="font-semibold text-white">طول کامل یک ترم دانشگاهی</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>جستجو در پایگاه دانش و جزوات مرجع</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>رندر تخصصی فرمولهای کوانتوم و ریاضی</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>اولویت در پردازش پرسشها</span>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#telegram-purchase" class="w-full text-center py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition">
+                    خرید از طریق تلگرام
+                </a>
+            </div>
+
+            <!-- 1 Year -->
+            <div class="bg-slate-900/70 border border-slate-800 rounded-3xl p-8 relative flex flex-col justify-between hover:border-slate-700 transition duration-300 shadow-xl shadow-black/20">
+                <div>
+                    <div class="text-sm font-bold text-purple-400 mb-2">طرح جامع پژوهشی</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">۱ ساله (۳۶۵ روز)</h3>
+                    <div class="flex items-baseline gap-2 mb-6">
+                        <span class="text-4xl font-black text-white">۳,۹۹۹,۰۰۰</span>
+                        <span class="text-slate-400 text-sm">تومان</span>
+                    </div>
+                    <ul class="space-y-3.5 text-sm text-slate-300 border-t border-slate-800/80 pt-6 mb-8">
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>مناسب نگارش پایاننامه و مقالات ISI</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>دسترسی دائم بدون دغدغه تمدید ماهانه</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>پشتیبانی اختصاصی مستقیم</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="text-emerald-400 text-base font-bold">✓</span>
+                            <span>دسترسی زودهنگام به قابلیتهای جدید</span>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#telegram-purchase" class="w-full text-center py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm transition border border-slate-700">
+                    نحوه خرید و دریافت کد
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Telegram Contact / Purchase Instructions Section -->
+        <div id="telegram-purchase" class="bg-gradient-to-r from-blue-950/60 to-indigo-950/60 border border-blue-800/50 rounded-3xl p-8 md:p-10 mb-16 text-center shadow-xl relative overflow-hidden">
+            <div class="relative z-10 max-w-2xl mx-auto">
+                <div class="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-blue-400 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-3">نحوه ثبت سفارش و خرید اشتراک</h3>
+                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                    برای واریز و دریافت فوری کد اختصاصی فعالسازی، لطفاً به آیدی پشتیبانی تلگرام پیام دهید. پس از هماهنگی، یک کد فعالسازی (Redeem Code) معتبر برای شما ارسال میشود.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="https://t.me/abul_ah" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                        <span>ارتباط مستقیم در تلگرام (@abul_ah)</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Forms: Redeem & Check Status -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Card 1: Redeem Code -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">
+                        🔑
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">فعالسازی کد اشتراک</h3>
+                        <p class="text-xs text-slate-400">کد دریافتی از تلگرام را وارد کنید</p>
+                    </div>
+                </div>
+
+                <form id="redeem-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">ایمیل ثبتنام شده در سامانه chat.gcat.ir</label>
+                        <input type="email" id="redeem-email" required placeholder="example@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                        <span class="text-[11px] text-slate-500 mt-1 block">دقیقاً همان ایمیلی که در چت با آن ثبتنام کردید.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">کد فعالسازی اشتراک (Redeem Code)</label>
+                        <input type="text" id="redeem-code" required placeholder="GCAT-1M-XXXX-XXXX" dir="ltr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm font-mono text-center tracking-wider text-emerald-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition uppercase">
+                    </div>
+
+                    <button type="submit" id="redeem-btn" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
+                        <span>فعالسازی آنی اشتراک</span>
+                    </button>
+                </form>
+
+                <!-- Feedback Area -->
+                <div id="redeem-result" class="mt-4 hidden p-4 rounded-xl text-sm leading-relaxed"></div>
+            </div>
+
+            <!-- Card 2: Check Status -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                        🔍
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">استعلام وضعیت اشتراک</h3>
+                        <p class="text-xs text-slate-400">مشاهده روزهای باقیمانده و تاریخ انقضا</p>
+                    </div>
+                </div>
+
+                <form id="status-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">ایمیل ثبتنام شده</label>
+                        <input type="email" id="status-email" required placeholder="example@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                    </div>
+
+                    <button type="submit" id="status-btn" class="w-full py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold text-sm transition border border-slate-700 flex items-center justify-center gap-2">
+                        <span>بررسی وضعیت</span>
+                    </button>
+                </form>
+
+                <!-- Status Feedback Area -->
+                <div id="status-result" class="mt-4 hidden p-4 rounded-xl text-sm leading-relaxed"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p>© ۱۴۰۵ سامانه هوشمند پژوهش و جزوات دانشگاه. تمامی حقوق محفوظ است.</p>
+            <div class="flex items-center gap-6">
+                <a href="https://t.me/abul_ah" target="_blank" class="hover:text-blue-400 transition">پشتیبانی تلگرام</a>
+                <a href="https://chat.gcat.ir" class="hover:text-blue-400 transition">ورود به چت</a>
+                <a href="/subscribe/admin" class="hover:text-slate-400 transition text-[11px]">ورود مدیریت</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Frontend Script -->
+    <script>
+        // Redeem Code Handler
+        document.getElementById('redeem-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('redeem-email').value.trim();
+            const code = document.getElementById('redeem-code').value.trim();
+            const btn = document.getElementById('redeem-btn');
+            const resBox = document.getElementById('redeem-result');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>در حال پردازش...</span>';
+            resBox.className = 'mt-4 hidden p-4 rounded-xl text-sm leading-relaxed';
+
+            try {
+                const response = await fetch('/subscribe/api/redeem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
+                });
+                const data = await response.json();
+
+                resBox.classList.remove('hidden');
+                if (response.ok && data.success) {
+                    resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-emerald-950/60 border border-emerald-800 text-emerald-200';
+                    resBox.innerHTML = `
+                        <div class="font-bold text-base mb-1">🎉 ${data.message}</div>
+                        <div class="text-xs text-emerald-300 mt-2 space-y-1">
+                            <div>• طرح فعال شده: <strong>${data.plan_name}</strong></div>
+                            <div>• روزهای اعتبار: <strong>${data.remaining_days} روز</strong></div>
+                            <div>• تاریخ انقضا: <strong>${data.expires_at}</strong></div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-emerald-800/60 flex items-center justify-between">
+                            <span>اکنون میتوانید وارد سامانه چت شوید:</span>
+                            <a href="https://chat.gcat.ir" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition">ورود به چت</a>
+                        </div>
+                    `;
+                    document.getElementById('redeem-code').value = '';
+                } else {
+                    resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-rose-950/60 border border-rose-800 text-rose-200';
+                    resBox.innerHTML = `⚠️ ${data.message || 'خطا در فعالسازی کد.'}`;
+                }
+            } catch (err) {
+                resBox.classList.remove('hidden');
+                resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-rose-950/60 border border-rose-800 text-rose-200';
+                resBox.innerHTML = '⚠️ خطای ارتباط با سرور. لطفاً مجدداً تلاش کنید یا با تلگرام @abul_ah تماس بگیرید.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>فعالسازی آنی اشتراک</span>';
+            }
+        });
+
+        // Status Check Handler
+        document.getElementById('status-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('status-email').value.trim();
+            const btn = document.getElementById('status-btn');
+            const resBox = document.getElementById('status-result');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>در حال بررسی...</span>';
+            resBox.className = 'mt-4 hidden p-4 rounded-xl text-sm leading-relaxed';
+
+            try {
+                const response = await fetch(`/subscribe/api/status?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+
+                resBox.classList.remove('hidden');
+                if (response.ok && data.success) {
+                    if (data.is_admin) {
+                        resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-purple-950/60 border border-purple-800 text-purple-200';
+                        resBox.innerHTML = `
+                            <div class="font-bold text-base mb-1">👑 حساب کاربری ویژه (${data.name})</div>
+                            <div class="text-xs text-purple-300 mt-1">${data.status_label}</div>
+                        `;
+                    } else if (data.active) {
+                        resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-blue-950/60 border border-blue-800 text-blue-200';
+                        resBox.innerHTML = `
+                            <div class="font-bold text-base mb-1">✅ اشتراک فعال (${data.name})</div>
+                            <div class="text-xs text-blue-300 mt-2 space-y-1">
+                                <div>• طرح فعال: <strong>${data.plan_name}</strong></div>
+                                <div>• روزهای باقیمانده: <strong class="text-emerald-400 text-sm">${data.remaining_days} روز</strong></div>
+                                <div>• تاریخ پایان: <strong>${data.expires_at}</strong></div>
+                            </div>
+                        `;
+                    } else {
+                        resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-amber-950/60 border border-amber-800 text-amber-200';
+                        resBox.innerHTML = `
+                            <div class="font-bold text-base mb-1">⏳ وضعیت: بدون اشتراک فعال</div>
+                            <div class="text-xs text-amber-300 mt-1">کاربر گرامی (${data.name})، در حال حاضر اشتراک فعالی برای حساب شما ثبت نشده است. برای تمدید یا فعالسازی به آیدی تلگرام @abul_ah پیام دهید.</div>
+                        `;
+                    }
+                } else {
+                    resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-rose-950/60 border border-rose-800 text-rose-200';
+                    resBox.innerHTML = `⚠️ ${data.message || 'کاربری با این ایمیل یافت نشد.'}`;
+                }
+            } catch (err) {
+                resBox.classList.remove('hidden');
+                resBox.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-rose-950/60 border border-rose-800 text-rose-200';
+                resBox.innerHTML = '⚠️ خطای ارتباط با سرور.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>بررسی وضعیت</span>';
+            }
+        });
+    </script>
+</body>
+</html>

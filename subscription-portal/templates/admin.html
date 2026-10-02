@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت کدهای اشتراک | دانشگاه</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Persian Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    <style>
+        body, * {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+
+    {% if not authenticated %}
+    <!-- Admin Login Screen -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xl mx-auto mb-4">
+                🔒
+            </div>
+            <h2 class="text-xl font-bold text-white text-center mb-1">ورود به پنل مدیریت اشتراک</h2>
+            <p class="text-xs text-slate-400 text-center mb-6">جهت تولید کدهای فعالسازی و مدیریت مشترکین</p>
+
+            <form id="admin-login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">رمز عبور مدیریت</label>
+                    <input type="password" id="admin-password" required dir="ltr" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-center tracking-widest">
+                </div>
+                <button type="submit" id="login-btn" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition shadow-lg shadow-blue-600/20">
+                    ورود به پنل
+                </button>
+                <div id="login-error" class="hidden text-rose-400 text-xs text-center mt-2"></div>
+            </form>
+            <div class="mt-6 text-center">
+                <a href="/subscribe" class="text-xs text-slate-500 hover:text-slate-300 transition">← بازگشت به صفحه اشتراک</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            const errBox = document.getElementById('login-error');
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+            btn.innerText = 'در حال بررسی...';
+            errBox.classList.add('hidden');
+
+            try {
+                const res = await fetch('/subscribe/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    window.location.reload();
+                } else {
+                    errBox.innerText = data.message || 'رمز عبور نامعتبر است.';
+                    errBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                errBox.innerText = 'خطای اتصال به سرور.';
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'ورود به پنل';
+            }
+        });
+    </script>
+
+    {% else %}
+    <!-- Authenticated Admin Dashboard -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
+                    ⚙️
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-white">مدیریت کدهای اشتراک و کاربران</h1>
+                    <p class="text-xs text-slate-400">سامانه هوشمند دانشگاه</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/subscribe" target="_blank" class="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800 transition">نمایش پورتال</a>
+                <button onclick="adminLogout()" class="text-xs text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 transition">خروج</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-800 mb-8 space-x-2 space-x-reverse">
+            <button onclick="switchTab('tab-generate')" id="btn-tab-generate" class="tab-btn py-3 px-6 text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition">
+                ➕ تولید کد جدید
+            </button>
+            <button onclick="switchTab('tab-codes')" id="btn-tab-codes" class="tab-btn py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+                🎟️ کدهای صادر شده
+            </button>
+            <button onclick="switchTab('tab-subscribers')" id="btn-tab-subscribers" class="tab-btn py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+                👥 مشترکین و تمدید دسترسی
+            </button>
+        </div>
+
+        <!-- TAB 1: GENERATE CODE -->
+        <div id="tab-generate" class="tab-content">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 max-w-2xl shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2">تولید کد اختصاصی اشتراک (Redeem Code)</h3>
+                <p class="text-xs text-slate-400 mb-6">پس از واریز مشتری در تلگرام، پلن مورد نظر را انتخاب و کد را بسازید و در تلگرام ارسال کنید.</p>
+
+                <form id="gen-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">انتخاب طرح اشتراک</label>
+                        <select id="gen-plan" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option value="1m">اشتراک ۱ ماهه (۳۰ روز) - ۳۹۹,۰۰۰ تومان</option>
+                            <option value="3m" selected>اشتراک ۳ ماهه (۹۰ روز) - ۹۹۹,۰۰۰ تومان (پیشنهاد ویژه)</option>
+                            <option value="1y">اشتراک ۱ ساله (۳۶۵ روز) - ۳,۹۹۹,۰۰۰ تومان</option>
+                            <option value="custom">طرح سفارشی (تعیین روز دلخواه)</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-fields" class="hidden grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">تعداد روز اعتبار</label>
+                            <input type="number" id="gen-custom-days" min="1" placeholder="مثلاً 14" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">مبلغ پرداختی (تومان)</label>
+                            <input type="number" id="gen-custom-price" placeholder="مثلاً 150000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">یادداشت برای این سفارش (اختیاری)</label>
+                        <input type="text" id="gen-notes" placeholder="مثال: دانشجو محمد رضایی - تلگرام @user" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">تعداد کد مورد نیاز</label>
+                        <input type="number" id="gen-count" value="1" min="1" max="20" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white text-center">
+                    </div>
+
+                    <button type="submit" id="gen-btn" class="py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition shadow-lg shadow-blue-600/20">
+                        ⚡ ایجاد کد و نمایش
+                    </button>
+                </form>
+
+                <!-- Generated Codes Result Area -->
+                <div id="gen-result" class="hidden mt-6 p-6 rounded-2xl bg-slate-950 border border-emerald-500/40">
+                    <div class="text-xs font-bold text-emerald-400 mb-3 flex items-center justify-between">
+                        <span>✅ کد اشتراک با موفقیت تولید شد:</span>
+                        <span id="gen-plan-label" class="text-slate-400"></span>
+                    </div>
+                    <div id="gen-codes-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CODES LIST -->
+        <div id="tab-codes" class="tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-bold text-white">لیست تمامی کدهای صادر شده</h3>
+                    <button onclick="loadCodes()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg transition">🔄 بهروزرسانی</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-right text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">کد فعالسازی</th>
+                                <th class="p-3">پلن</th>
+                                <th class="p-3">مبلغ (تومان)</th>
+                                <th class="p-3">وضعیت</th>
+                                <th class="p-3">استفادهکننده</th>
+                                <th class="p-3">تاریخ مصرف</th>
+                                <th class="p-3">تاریخ ایجاد</th>
+                                <th class="p-3">یادداشت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="codes-tbody" class="divide-y divide-slate-800/60">
+                            <tr><td colspan="8" class="p-4 text-center text-slate-500">در حال بارگذاری کدهای صادر شده...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SUBSCRIBERS -->
+        <div id="tab-subscribers" class="tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-bold text-white">مشترکین فعال و سوابق دسترسی</h3>
+                    <button onclick="loadSubscribers()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg transition">🔄 بهروزرسانی</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-right text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">ایمیل کاربر</th>
+                                <th class="p-3">نام</th>
+                                <th class="p-3">نقش فعلی</th>
+                                <th class="p-3">پلن</th>
+                                <th class="p-3">تاریخ انقضا</th>
+                                <th class="p-3">روزهای مانده</th>
+                                <th class="p-3">وضعیت</th>
+                                <th class="p-3">عملیات مدیریت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subs-tbody" class="divide-y divide-slate-800/60">
+                            <tr><td colspan="8" class="p-4 text-center text-slate-500">در حال بارگذاری کاربران...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-blue-500', 'text-blue-400');
+                el.classList.add('border-transparent', 'text-slate-400');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('border-transparent', 'text-slate-400');
+            activeBtn.classList.add('border-blue-500', 'text-blue-400');
+
+            if (tabId === 'tab-codes') loadCodes();
+            if (tabId === 'tab-subscribers') loadSubscribers();
+        }
+
+        async function adminLogout() {
+            await fetch('/subscribe/api/admin/logout', { method: 'POST' });
+            window.location.reload();
+        }
+
+        // Custom plan toggle
+        document.getElementById('gen-plan').addEventListener('change', (e) => {
+            const isCustom = e.target.value === 'custom';
+            document.getElementById('custom-fields').classList.toggle('hidden', !isCustom);
+        });
+
+        // Generate Code Form
+        document.getElementById('gen-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const planKey = document.getElementById('gen-plan').value;
+            const customDays = parseInt(document.getElementById('gen-custom-days')?.value || '0');
+            const customPrice = parseInt(document.getElementById('gen-custom-price')?.value || '0');
+            const notes = document.getElementById('gen-notes').value.trim();
+            const count = parseInt(document.getElementById('gen-count').value || '1');
+            const btn = document.getElementById('gen-btn');
+
+            btn.disabled = true;
+            btn.innerText = 'در حال ساخت...';
+
+            try {
+                const res = await fetch('/subscribe/api/admin/generate-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan_key: planKey,
+                        custom_days: customDays,
+                        custom_price: customPrice,
+                        notes,
+                        count
+                    })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    const resBox = document.getElementById('gen-result');
+                    const list = document.getElementById('gen-codes-list');
+                    document.getElementById('gen-plan-label').innerText = `${data.plan_name} (${data.duration_days} روز)`;
+                    list.innerHTML = '';
+
+                    data.codes.forEach(code => {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl p-3';
+                        row.innerHTML = `
+                            <span class="font-mono text-base tracking-wider text-emerald-300 uppercase">${code}</span>
+                            <button onclick="copyToClipboard('${code}', this)" class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                📋 کپی کد
+                            </button>
+                        `;
+                        list.appendChild(row);
+                    });
+
+                    resBox.classList.remove('hidden');
+                } else {
+                    alert(data.detail || 'خطا در ایجاد کد.');
+                }
+            } catch (err) {
+                alert('خطای اتصال به سرور.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '⚡ ایجاد کد و نمایش';
+            }
+        });
+
+        function copyToClipboard(text, btnElement) {
+            navigator.clipboard.writeText(text);
+            const origText = btnElement.innerText;
+            btnElement.innerText = '✓ کپی شد!';
+            btnElement.classList.replace('bg-blue-600', 'bg-emerald-600');
+            setTimeout(() => {
+                btnElement.innerText = origText;
+                btnElement.classList.replace('bg-emerald-600', 'bg-blue-600');
+            }, 2000);
+        }
+
+        async function loadCodes() {
+            const tbody = document.getElementById('codes-tbody');
+            try {
+                const res = await fetch('/subscribe/api/admin/codes');
+                const data = await res.json();
+                if (res.ok && data.codes) {
+                    if (data.codes.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">هنوز کدی صادر نشده است.</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = data.codes.map(c => `
+                        <tr class="hover:bg-slate-950/40">
+                            <td class="p-3 font-mono font-bold text-white tracking-wider">${c.code}</td>
+                            <td class="p-3">${c.plan_name}</td>
+                            <td class="p-3">${c.price_tomans ? c.price_tomans.toLocaleString('fa-IR') : '—'}</td>
+                            <td class="p-3">
+                                ${c.is_used 
+                                    ? '<span class="px-2 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-400 font-semibold">استفاده شده</span>' 
+                                    : '<span class="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold">آماده مصرف</span>'}
+                            </td>
+                            <td class="p-3 font-mono text-slate-300" dir="ltr">${c.used_by_email || '—'}</td>
+                            <td class="p-3 text-slate-400" dir="ltr">${c.used_at || '—'}</td>
+                            <td class="p-3 text-slate-400" dir="ltr">${c.created_at || '—'}</td>
+                            <td class="p-3 text-slate-400">${c.notes || '—'}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-rose-400">خطا در بارگذاری لیست کدها.</td></tr>';
+            }
+        }
+
+        async function loadSubscribers() {
+            const tbody = document.getElementById('subs-tbody');
+            try {
+                const res = await fetch('/subscribe/api/admin/subscribers');
+                const data = await res.json();
+                if (res.ok && data.subscribers) {
+                    if (data.subscribers.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">هیچ مشترکی ثبت نشده است.</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = data.subscribers.map(s => `
+                        <tr class="hover:bg-slate-950/40">
+                            <td class="p-3 font-mono font-semibold text-white" dir="ltr">${s.email}</td>
+                            <td class="p-3 text-slate-300">${s.name || '—'}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${s.role === 'admin' ? 'bg-purple-500/20 text-purple-300' : (s.role === 'user' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300')}">
+                                    ${s.role}
+                                </span>
+                            </td>
+                            <td class="p-3">${s.plan_name}</td>
+                            <td class="p-3 font-mono text-slate-300" dir="ltr">${s.expires_at || '—'}</td>
+                            <td class="p-3">
+                                <span class="font-bold ${s.remaining_days > 0 ? 'text-emerald-400' : 'text-rose-400'}">${s.remaining_days} روز</span>
+                            </td>
+                            <td class="p-3">
+                                ${s.is_active 
+                                    ? '<span class="text-emerald-400 font-bold">فعال</span>' 
+                                    : '<span class="text-slate-500">منقضی/لغو</span>'}
+                            </td>
+                            <td class="p-3">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="extendUser('${s.email}', 30)" class="bg-blue-600/80 hover:bg-blue-600 text-white px-2 py-1 rounded text-[11px] transition">
+                                        +30 روز
+                                    </button>
+                                    <button onclick="revokeUser('${s.email}')" class="bg-rose-600/80 hover:bg-rose-600 text-white px-2 py-1 rounded text-[11px] transition">
+                                        لغو دسترسی
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-rose-400">خطا در بارگذاری لیست کاربران.</td></tr>';
+            }
+        }
+
+        async function extendUser(email, days) {
+            if (!confirm(`آیا مطمئن هستید که میخواهید ${days} روز به اشتراک ${email} اضافه کنید؟`)) return;
+            try {
+                const res = await fetch('/subscribe/api/admin/extend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, days })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert(data.message);
+                    loadSubscribers();
+                } else {
+                    alert(data.detail || 'خطا در تمدید اشتراک.');
+                }
+            } catch (err) {
+                alert('خطای اتصال به سرور.');
+            }
+        }
+
+        async function revokeUser(email) {
+            if (!confirm(`آیا مطمئن هستید که میخواهید دسترسی ${email} را لغو و به حالت Pending برگردانید؟`)) return;
+            try {
+                const res = await fetch('/subscribe/api/admin/revoke', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert(data.message);
+                    loadSubscribers();
+                } else {
+                    alert(data.detail || 'خطا در لغو اشتراک.');
+                }
+            } catch (err) {
+                alert('خطای اتصال به سرور.');
+            }
+        }
+    </script>
+    {% endif %}
+
+</body>
+</html>
