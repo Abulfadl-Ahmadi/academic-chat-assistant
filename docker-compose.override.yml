@@ -1,0 +1,39 @@
+# Machine-specific settings for this deployment, tracked in git so a clone
+# reproduces the same stack. The OAuth client secret comes from .env, which
+# stays untracked:
+#
+#   OAUTH_CLIENT_SECRET=<value>
+#
+services:
+  caddy:
+    profiles:
+      - donotstart
+
+  open-webui:
+    ports:
+      - "127.0.0.1:8088:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - ENABLE_OAUTH=true
+      - OAUTH_PROVIDER_NAME=GCAT
+      - OPENID_PROVIDER_URL=https://auth.gcat.ir/.well-known/openid-configuration
+      - OPENID_END_SESSION_ENDPOINT=https://auth.gcat.ir/api/logout
+      - WEBUI_AUTH_SIGNOUT_REDIRECT_URL=https://chat.gcat.ir/
+      - OAUTH_CLIENT_ID=chat-webui
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:?set OAUTH_CLIENT_SECRET in .env}
+      - OPENID_REDIRECT_URI=https://chat.gcat.ir/oauth/oidc/callback
+      - OAUTH_SCOPES=openid email profile
+      - OAUTH_AUTO_REDIRECT=true
+      - ENABLE_PASSWORD_AUTH=false
+      - ENABLE_OAUTH_SIGNUP=true
+      - OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true
+
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
+
+# The G-CAT customisations (branding assets, the auth.gcat.ir logout patch and
+# the WEBUI_NAME change) are baked into the gcat/open-webui:custom image by
+# Dockerfile.webui. They were previously bind-mounted from here, but under the
+# postgres service by mistake, so they never reached the web container.

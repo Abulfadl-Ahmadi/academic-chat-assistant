@@ -32,5 +32,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local docker compose override
-docker-compose.override.yml
+# Docker
+# docker-compose.override.yml is intentionally NOT ignored: it carries this
+# deployment's ports and OAuth wiring, and its secret comes from .env.
+# Local-only compose variants stay ignored.
+docker-compose.override.local.yml
+docker-compose.*.local.yml
+
+# Locally built custom image artifacts
+gcat/
