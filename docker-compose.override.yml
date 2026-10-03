@@ -19,7 +19,18 @@ services:
       - OAUTH_PROVIDER_NAME=GCAT
       - OPENID_PROVIDER_URL=https://auth.gcat.ir/.well-known/openid-configuration
       - OPENID_END_SESSION_ENDPOINT=https://auth.gcat.ir/api/logout
-      - WEBUI_AUTH_SIGNOUT_REDIRECT_URL=https://chat.gcat.ir/
+      # Where "Sign out" in chat ends up when Open WebUI has no OIDC session cookie to build an
+      # end-session URL from (sessions created before SSO, or a lost oauth_session_id cookie).
+      # It used to be https://chat.gcat.ir/, which signed the user out of chat only to log them
+      # straight back in through the still-valid SSO session, and never ended that session. It
+      # must always be the identity provider's logout endpoint.
+      - WEBUI_AUTH_SIGNOUT_REDIRECT_URL=https://auth.gcat.ir/api/logout
+      # Single sign-out in the other direction: when a user signs out anywhere else (the AI
+      # panel), auth.gcat.ir POSTs a signed logout_token to /oauth/backchannel-logout and Open
+      # WebUI revokes that user's sessions. Needs REDIS_URL (see docker-compose.yml).
+      - ENABLE_OAUTH_BACKCHANNEL_LOGOUT=true
+      # Match the identity provider's 7-day session instead of Open WebUI's 4-week default.
+      - JWT_EXPIRES_IN=7d
       - OAUTH_CLIENT_ID=chat-webui
       - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:?set OAUTH_CLIENT_SECRET in .env}
       - OPENID_REDIRECT_URI=https://chat.gcat.ir/oauth/oidc/callback

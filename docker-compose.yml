@@ -17,6 +17,26 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: chat-redis
+    restart: always
+    # Holds Open WebUI's session-revocation list. When the identity provider signs a user out
+    # (OIDC back-channel logout) Open WebUI records it here so that user's tokens stop working
+    # immediately, in every browser. The append-only file keeps the list across restarts, so a
+    # signed-out session cannot come back to life when this container restarts. Not published on
+    # the host: only reachable from the compose network.
+    command: ["redis-server", "--appendonly", "yes", "--save", ""]
+    volumes:
+      - redis_data:/data
+    networks:
+      - academic-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   open-webui:
     # Derived from ghcr.io/open-webui/open-webui:main by Dockerfile.webui, which
     # bakes in the G-CAT branding and the auth.gcat.ir logout patch. Build with:
@@ -27,11 +47,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file:
       - path: .env
         required: false
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-webui_user}:${POSTGRES_PASSWORD:-replace_with_strong_database_password_here}@postgres:5432/${POSTGRES_DB:-openwebui}
+      - REDIS_URL=redis://redis:6379/0
     volumes:
       - webui_data:/app/backend/data
     networks:
@@ -57,6 +80,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   webui_data:
   caddy_data:
   caddy_config:
