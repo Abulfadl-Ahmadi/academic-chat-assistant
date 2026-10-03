@@ -121,6 +121,35 @@ docker compose logs -f
 
 ---
 
+## 🔐 Single Sign-On & Sign-Out
+
+Sign-in is delegated to the G-CAT identity provider (`auth.gcat.ir`, served by the OmniRoute
+panel); passwords are not used here. The full design lives in the panel repository
+(`docs/SSO.md`). What this deployment has to provide:
+
+| Piece | Where | Why |
+| --- | --- | --- |
+| `redis` service + `REDIS_URL` | `docker-compose.yml` | Open WebUI keeps its session-revocation list here |
+| `ENABLE_OAUTH_BACKCHANNEL_LOGOUT=true` | `docker-compose.override.yml` | exposes `POST /oauth/backchannel-logout`, which the identity provider calls when a user signs out *anywhere*, so the chat session ends too |
+| `WEBUI_AUTH_SIGNOUT_REDIRECT_URL=https://auth.gcat.ir/api/logout` | `docker-compose.override.yml` | "Sign out" in chat must always end at the identity provider, otherwise the portal session survives and chat signs straight back in |
+| `JWT_EXPIRES_IN=7d` | `docker-compose.override.yml` | same lifetime as the identity provider's session |
+
+Apply on the server after pulling:
+
+```bash
+git pull
+docker compose up -d          # starts Redis, recreates open-webui with the new settings
+```
+
+Open WebUI settings that are stored in its database (`PersistentConfig`, e.g. `JWT_EXPIRES_IN`)
+keep any value that was ever saved from its admin UI; the environment only supplies the default.
+
+Check it from anywhere (read-only, no sign-in): `scripts/verify-sso.sh` in the panel repository.
+`POST https://chat.gcat.ir/oauth/backchannel-logout` must answer `400` (receiver enabled); `404`
+means the setting above is not active yet.
+
+---
+
 ## 🛡️ Automated Backups
 
 To enable automated daily snapshots of the database and uploaded knowledge files, add a crontab entry:
